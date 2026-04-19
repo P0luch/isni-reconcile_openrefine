@@ -403,10 +403,7 @@ def parse_record(record_el):
 # ---------------------------------------------------------------------------
 
 def build_cql(index, raw_query):
-    if index in ("pica.nw", "pica.isn"):
-        term = "+".join(raw_query.strip().split())
-    else:
-        term = raw_query.strip()
+    term = raw_query.strip()
     return f'{index} = "{term}"'
 
 

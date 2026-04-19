@@ -1,5 +1,10 @@
 /docs
 __pycache__/
+dist/
+build/
+*.spec
+version_info.txt
+
 *.pkl
 settings.json
 *.code-workspace
