@@ -1,9 +1,11 @@
-# isni-reconcile-openrefine
+# Service de reconcilaition ISNI
 
 Service de réconciliation [OpenRefine](https://openrefine.org/) pour l'[API ISNI](https://isni.org/).
 
 > Adapté depuis [isni-reconcile](https://github.com/cmharlow/isni-reconcile) (cmharlow)
+> 
 > Prototype — ce projet est issu d'une session de vibe coding assistée par IA. Il fonctionne mais n'a pas vocation à être utilisé en production sans revue du code.
+> 
 ## Fonctionnalités
 
 - Réconciliation de noms de personnes et d'organisations avec la base ISNI
