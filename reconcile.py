@@ -611,7 +611,9 @@ def reconcile():
     # Extension de données
     extend_raw = request.values.get("extend")
     if extend_raw:
-        return extend_handler(extend_raw)
+        result = extend_handler(extend_raw)
+        _save_all()
+        return result
 
     # Requêtes par lot
     queries_raw = request.values.get("queries")
@@ -626,6 +628,7 @@ def reconcile():
             if isinstance(qtype, list) and qtype:
                 qtype = qtype[0].get("id") if isinstance(qtype[0], dict) else qtype[0]
             results[key] = {"result": search(q["query"], query_type=qtype)}
+        _save_all()
         return jsonify(results)
 
     # Requête unique (mode déprécié)
@@ -667,7 +670,9 @@ def extend():
     extend_raw = request.values.get("extend")
     if not extend_raw:
         return jsonify({"error": "Paramètre extend manquant"}), 400
-    return extend_handler(extend_raw)
+    result = extend_handler(extend_raw)
+    _save_all()
+    return result
 
 
 def extend_handler(extend_raw):
