@@ -1,0 +1,6 @@
+/docs
+__pycache__/
+*.pkl
+settings.json
+*.code-workspace
+/venv

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>ISNI × OpenRefine</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #f8f9f6;
+      margin: 0; padding: 0;
+      color: #1a1a2e;
+    }
+
+    .card { max-width: 480px; margin: 0 auto; }
+
+    .card-header {
+      padding: 32px 24px 4px;
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .card-header h1 { font-size: 1.3em; margin: 0; font-weight: 700; }
+    .card-header .sub { font-size: 0.78em; color: #9ca3af; margin-top: 2px; }
+    .card-header a { color: #6b7280; line-height: 0; }
+    .card-header a:hover { color: #1a1a2e; }
+
+    .card-body { padding: 20px 24px 32px; }
+
+        /* Section titres */
+    .advanced-section h3 {
+      font-size: 0.88em; margin: 0 0 2px 0;
+      color: #64748b; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .advanced-section label { color: #475569; }
+
+    hr { border: none; border-top: 1px solid #e8ecf0; margin: 14px 0; }
+
+    label {
+      display: block; margin-top: 10px;
+      font-weight: 600; font-size: 0.88em; color: #374151;
+    }
+
+    input[type="number"] {
+      width: 100%; padding: 6px 9px; margin-top: 3px;
+      border: 1px solid #d1d5db; border-radius: 6px;
+      font-family: inherit; font-size: 0.92em; color: #1a1a2e;
+      background: #fafafa; outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    input:focus {
+      border-color: #312783;
+      box-shadow: 0 0 0 3px rgba(49,39,131,0.12);
+      background: #fff;
+    }
+
+    .hint { font-size: 0.78em; color: #9ca3af; margin-top: 3px; }
+
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .service-url-row {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      font-size: 0.88em; color: #6b7280;
+      background: #f0f0f8; border-radius: 6px; padding: 8px 12px;
+    }
+    .service-url-row a { color: #312783; text-decoration: none; font-weight: 500; }
+    .service-url-row a:hover { text-decoration: underline; }
+
+    .btn-row { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+
+    button {
+      padding: 7px 15px; cursor: pointer;
+      border: 1px solid #d1d5db; background: #f9fafb;
+      border-radius: 6px; font-family: inherit; font-size: 0.88em;
+      color: #374151; transition: background 0.15s, border-color 0.15s;
+    }
+    button:hover { background: #f0f4f8; border-color: #9ca3af; }
+    button.primary {
+      background: #312783; color: white; border-color: #251f6b; font-weight: 600;
+    }
+    button.primary:hover { background: #3b2e9c; }
+    button.small { padding: 4px 10px; font-size: 0.82em; }
+
+    #toast-container {
+      position: fixed; bottom: 24px; right: 24px;
+      display: flex; flex-direction: column; gap: 8px; z-index: 9998;
+    }
+    .toast {
+      padding: 10px 16px; border-radius: 6px; font-size: 0.88em;
+      color: white; box-shadow: 0 3px 10px rgba(0,0,0,0.18);
+      opacity: 1; transition: opacity 0.4s; max-width: 300px;
+    }
+    .toast.ok  { background: #312783; }
+    .toast.err { background: #dc2626; }
+    .toast.info{ background: #475569; }
+
+    .footer {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      text-align: center; font-size: 0.75em; color: #c4c9d4;
+      padding: 8px 0; background: #f8f9f6;
+    }
+
+    .type-table { border-collapse: collapse; width: 100%; font-size: 0.82em; }
+    .type-table td { padding: 4px 10px 4px 0; vertical-align: top; }
+    .type-table .type-name {
+      white-space: nowrap; color: #312783; font-weight: 600;
+    }
+    .type-table .type-code { font-weight: 400; color: #aaa; }
+    .type-table .type-desc { color: #6b7280; }
+  </style>
+</head>
+<body>
+<div id="toast-container"></div>
+
+<div class="card">
+  <div class="card-header">
+    <div>
+      <h1>ISNI × OpenRefine</h1>
+      <div class="sub">Service de réconciliation — accès libre <a href="https://isni.oclc.org/sru/DB=1.2/" target="_blank">ISNI/OCLC</a></div>
+    </div>
+    <a href="https://github.com/P0luch/insi-reconcile_openrefine" target="_blank" title="Dépôt de référence">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57
+                 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695
+                 -.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99
+                 .105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225
+                 -.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405
+                 c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225
+                 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3
+                 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+      </svg>
+    </a>
+  </div>
+
+  <div class="card-body">
+
+    <!-- URL du service -->
+    <div class="service-url-row">
+      <span>URL pour OpenRefine :</span>
+      <a href="http://127.0.0.1:{{ port }}/reconcile" target="_blank">
+        http://127.0.0.1:{{ port }}/reconcile
+      </a>
+      <button class="small" onclick="copyUrl()">Copier</button>
+    </div>
+
+    <hr>
+  <!-- Configuration -->
+    <div class="advanced-section">
+      <h3>Configuration du service</h3>
+    </div>
+
+    <form id="settings-form">
+      <div class="row-2">
+        <div>
+          <label for="maxResults">Résultats maximum</label>
+          <input type="number" id="maxResults" name="maxResults"
+                 value="{{ settings.maxResults }}" min="1" max="10">
+          <p class="hint">Candidats retournés (1–10)</p>
+        </div>
+        <div>
+          <label for="threshold">Seuil de score</label>
+          <input type="number" id="threshold" name="threshold"
+                 value="{{ settings.threshold }}" min="0" max="100" step="5">
+          <p class="hint">Score minimum (0–100)</p>
+        </div>
+      </div>
+      <div style="background:#eeecf9; border-left:3px solid #312783; border-radius:4px; 
+                padding:9px 12px; font-size:0.82em; color:#374151; margin-top:10px;">
+      <span style="font-weight:600; color:#312783;">ℹ Calcul du score</span><br>
+        1. Exact sur le nom principal                → 100 <br>
+        2. Exact sur une variante                    → 90<br>
+        3. Tous les mots contenus dans nom principal → 75<br>
+        4. Tous les mots contenus dans une variante  → 65<br>
+      </div>
+      <div class="btn-row">
+        <button type="button" class="primary" onclick="saveSettings()">Sauvegarder</button>
+        <button type="button" onclick="clearCache()"
+                title="Vide le cache disque et mémoire">Vider le cache</button>
+      </div>
+    </form>
+
+    <hr>
+
+    <!-- Données de session -->
+    <div class="advanced-section">
+      <h3>Données de session</h3>
+    </div>
+    <p style="font-size:0.82em; color:#6b7280; margin:6px 0 10px 0;">
+      Le cache est conservé entre les sessions. Exportez-le pour le sauvegarder ou le partager, importez-le pour reprendre votre session depuis un autre poste.
+    </p>
+    <div class="btn-row">
+      <button type="button" onclick="window.location='/export-cache'"
+              title="Télécharge un zip avec les deux caches">Exporter le cache</button>
+      <button type="button" onclick="document.getElementById('import-file').click()"
+              title="Importe un zip exporté depuis un autre poste">Importer le cache</button>
+      <input type="file" id="import-file" accept=".zip" style="display:none"
+             onchange="importCache(this)">
+    </div>
+    <hr>
+
+    <div class="advanced-section">
+      <h3>Types de réconciliation</h3>
+    </div>
+    <table class="type-table">
+      <tr>
+        <td class="type-name">Nom exact <span class="type-code">(pica.na)</span></td>
+        <td class="type-desc">Recherche sur le nom de l'auteur (ex. <em>Maloy, Rebecca</em>).</td>
+      </tr>
+      <tr>
+        <td class="type-name">Mots-clés <span class="type-code">(pica.nw)</span></td>
+        <td class="type-desc">Recherche sur l'ensemble des champs indexés.</td>
+      </tr>
+      <tr>
+        <td class="type-name">Numéro ISNI <span class="type-code">(pica.isn)</span></td>
+        <td class="type-desc">Recherche sur l'identifiant de l'autorité.</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<div class="footer">ISNI Reconciliation Service - version 1.1</div>
+
+<script>
+  function toast(msg, type) {
+    var el = document.createElement('div');
+    el.className = 'toast ' + (type || 'info');
+    el.textContent = msg;
+    document.getElementById('toast-container').appendChild(el);
+    setTimeout(function() {
+      el.style.opacity = '0';
+      setTimeout(function() { el.remove(); }, 400);
+    }, 3500);
+  }
+
+  function copyUrl() {
+    navigator.clipboard.writeText('http://127.0.0.1:{{ port }}/reconcile')
+      .then(function() { toast('URL copiée.', 'ok'); })
+      .catch(function() { toast('Impossible de copier.', 'err'); });
+  }
+
+  function saveSettings() {
+    var data = new FormData(document.getElementById('settings-form'));
+    fetch('/settings', { method: 'POST', body: data })
+      .then(function(r) { return r.json(); })
+      .then(function(d) { toast(d.message, d.ok ? 'ok' : 'err'); })
+      .catch(function() { toast('Erreur lors de la sauvegarde.', 'err'); });
+  }
+
+  function clearCache() {
+    fetch('/clear-cache', { method: 'POST' })
+      .then(function(r) { return r.json(); })
+      .then(function(d) { toast(d.message, 'ok'); });
+  }
+
+  function importCache(input) {
+    var file = input.files[0];
+    if (!file) return;
+    var fd = new FormData();
+    fd.append('file', file);
+    input.value = '';
+    fetch('/import-cache', { method: 'POST', body: fd })
+      .then(function(r) { return r.json(); })
+      .then(function(d) { toast(d.message, d.ok ? 'ok' : 'err'); })
+      .catch(function() { toast('Erreur lors de l\'import.', 'err'); });
+  }
+</script>
+</body>
+</html>

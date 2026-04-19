@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ data.names[0].full }}</title>
+  <style>
+    body { font-family: sans-serif; margin: 10px; font-size: 12px; color: #1a1a2e; }
+    h1   { font-size: 1.1em; margin: 0 0 2px 0; }
+    .sub { color: #888; font-size: 0.9em; margin-bottom: 8px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 6px; }
+    td { padding: 3px 6px 3px 0; vertical-align: top; }
+    td:first-child { color: #888; white-space: nowrap; width: 80px; }
+    a { color: #0066cc; }
+    .hint { color: #bbb; font-size: 0.82em; margin-bottom: 8px;
+            border-bottom: 1px solid #eee; padding-bottom: 5px; }
+    .count { color: #aaa; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+
+  <div class="hint">
+    <a href="{{ data.uri }}" target="_blank">Voir sur isni.org ↗</a>
+  </div>
+
+  <h1>{{ data.nom }}{% if data.prenom %}, {{ data.prenom }}{% endif %}</h1>
+
+  {% if data.dates %}
+  <div class="sub">({{ data.dates }})</div>
+  {% endif %}
+
+  <table>
+
+    {% if data.isni %}
+    <tr>
+      <td>ISNI</td>
+      <td>{{ data.isni }}</td>
+    </tr>
+    {% endif %}
+
+    {% if data.role %}
+    <tr>
+      <td>Rôle</td>
+      <td>{{ data.role | join(' | ') }}</td>
+    </tr>
+    {% endif %}
+
+    {% if data.variantes %}
+    <tr>
+      <td>Variantes</td>
+      <td>
+        {% set displayed_v = data.variantes if full else data.variantes[:5] %}
+        {{ displayed_v | join(' | ') }}
+        {% if not full and data.variantes | length > 5 %}
+          <span class="count"> — {{ data.variantes | length }} au total,
+          <a href="?id={{ data.uri | urlencode }}&full=1" target="_blank">voir tous ↗</a></span>
+        {% endif %}
+      </td>
+    </tr>
+    {% endif %}
+
+  </table>
+
+  {% if data.titres %}
+  <div style="margin-top: 8px;">
+    <span style="color:#888; font-size:0.9em;">Titres</span>
+    <ul style="margin: 4px 0 0 16px; padding: 0; font-size: 0.9em;">
+      {% set displayed = data.titres if full else data.titres[:10] %}
+      {% for t in displayed %}
+      <li>{{ t }}</li>
+      {% endfor %}
+    </ul>
+    {% if not full and data.titres | length > 10 %}
+    <div style="color:#aaa; font-size:0.82em; margin-top:3px;">
+      {{ data.titres | length }} titres au total —
+      <a href="?id={{ data.uri | urlencode }}&full=1" target="_blank">voir tous ↗</a>
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+</body>
+</html>
