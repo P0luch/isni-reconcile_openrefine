@@ -5,12 +5,13 @@ Service de réconciliation [OpenRefine](https://openrefine.org/) pour l'[API ISN
 > Adapté depuis [isni-reconcile](https://github.com/cmharlow/isni-reconcile) (cmharlow)
 > 
 > Prototype — ce projet est issu d'une session de vibe coding assistée par IA. Il fonctionne mais n'a pas vocation à être utilisé en production sans revue du code.
-> 
+
+
 ## Fonctionnalités
 
 - Réconciliation de noms de personnes et d'organisations avec la base ISNI
 - Trois modes de recherche :
-  - **Nom exact** (`pica.na`) — recherche la séquence de mots dans les noms
+  - **Nom exact** (`pica.na`) — recherche la séquence de mots dans les noms (privilégier prénom nom)
   - **Mots-clés** (`pica.nw`) — recherche tous les mots dans les champs indexés
   - **Numéro ISNI** (`pica.isn`) — recherche directe par identifiant
 - Extension de données : récupération des métadonnées associées
@@ -22,6 +23,14 @@ Service de réconciliation [OpenRefine](https://openrefine.org/) pour l'[API ISN
 - Python 3.8+
 
 ## Installation
+
+### Exécutable Windows
+
+Télécharger la dernière version depuis les [Releases](../../releases) et lancer l'exécutable. Un terminal s'ouvre, puis l'interface de configuration s'affiche automatiquement dans le navigateur.
+
+### Dépôt Github
+
+Clôner ou télécharger le dépôt.
 
 ```bash
 # Créer et activer un environnement virtuel
